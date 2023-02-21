@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/gameblock_LAY_chipContainer1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="18dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp">
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point0brown"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:src="@drawable/ic_brown"/>
+
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point1brown"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_brown"
+            android:visibility="invisible"
+            />
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point2brown"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_brown"
+            android:visibility="invisible"
+            />
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point3brown"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_brown"
+            android:visibility="invisible"
+            />
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point4brown"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_brown"
+            android:visibility="invisible"
+            />
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point5brown"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_brown"
+            android:visibility="invisible"
+            />
+
+        <View
+            android:layout_marginTop="13dp"
+            android:layout_width="0dp"
+            android:layout_height="5dp"
+            android:layout_weight="0.3"/>
+        <ImageView
+            android:id="@+id/gameblock_IMG_point6brown"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_brown"
+            android:visibility="invisible"
+            />
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point7brown"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_brown"
+            android:visibility="invisible"
+            />
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point8brown"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_brown"
+            android:visibility="invisible"
+            />
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point9brown"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_brown"
+            android:visibility="invisible"
+            />
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point10brown"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_brown"
+            android:visibility="invisible"
+            />
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point11brown"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_brown"
+            android:visibility="invisible"
+            />
+
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/gameblock_LAY_chipContainer2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="18dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp">
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point0white"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_white"
+            android:visibility="invisible"
+            />
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point1white"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_white"
+            android:visibility="invisible"
+            />
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point2white"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_white"
+            android:visibility="invisible"
+            />
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point3white"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_white"
+            android:visibility="invisible"
+            />
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point4white"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_white"
+            android:visibility="invisible"
+            />
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point5white"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_white"
+            android:visibility="invisible"
+            />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"/>
+        <ImageView
+            android:id="@+id/gameblock_IMG_point6white"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_white"
+            android:visibility="invisible"
+            />
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point7white"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_white"
+            android:visibility="invisible"
+            />
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point8white"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_white"
+            android:visibility="invisible"
+           />
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point9white"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_white"
+            android:visibility="invisible"
+            />
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point10white"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_white"
+            android:visibility="invisible"
+            />
+
+        <ImageView
+            android:id="@+id/gameblock_IMG_point11white"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_white"
+            android:visibility="invisible"
+            />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
