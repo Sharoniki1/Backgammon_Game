@@ -4,16 +4,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -24,16 +25,98 @@ public class BackgammonGameActivity extends AppCompatActivity {
     private boolean wasRepeated = false;
     private boolean areEqual = false;
 
+    public final static String KEY_ROOM = "KEY_ROOM";
+
+    CallBack_updateChipsProtocol callBack_updateChipsProtocol = new CallBack_updateChipsProtocol() {
+        @Override
+        public void updateChips(Room room) {
+            if(backgammonGameManager.getCurrentUser().getChipColor() == UserDetails.CHIP.BROWN) {
+                updateOff(backgammonGameManager
+                        .getChipsRows().get(room.getGame().getTurnOff().getX()).getBrowns(), room);
+                updateOn(backgammonGameManager
+                        .getChipsRows().get(room.getGame().getTurnOn().getX()).getBrowns(), room);
+                if(room.getGame().getEaten() != null) {
+                    backgammonGameManager.handleEaten(room.getGame().getEaten(), ChipRow.COLOR.BROWN);
+                }
+            }
+            else {
+                updateOff(backgammonGameManager
+                        .getChipsRows().get(room.getGame().getTurnOff().getX()).getWhites(), room);
+                updateOn(backgammonGameManager
+                        .getChipsRows().get(room.getGame().getTurnOn().getX()).getBrowns(), room);
+                if(room.getGame().getEaten() != null) {
+                    backgammonGameManager.handleEaten(room.getGame().getEaten(), ChipRow.COLOR.WHITE);
+                }
+            }
+            adapter_chip.notifyDataSetChanged();
+            gameDBManager.readTurnFromDB(backgammonGameManager.getRoom(), backgammonGameManager.getCurrentUser());
+        }
+
+    };
+
+    private void updateOff(ArrayList<ChipRow> chips, Room room) {
+        backgammonGameManager
+                .getChipsRows()
+                .get(room.getGame().getTurnOff().getX())
+                .getBrowns()
+                .get(room.getGame().getTurnOff().getY()).setIsVisible(false);
+
+        if(room.getGame().getTurnOff().getX() < 15) {
+            backgammonGameManager.updateUpperOff(room.getGame().getTurnOff());
+        }
+        else {
+            backgammonGameManager.updateBottomOff(room.getGame().getTurnOff());
+        }
+    }
+
+    private void updateOn(ArrayList<ChipRow> chips, Room room) {
+        backgammonGameManager
+                .getChipsRows()
+                .get(room.getGame().getTurnOn().getX())
+                .getBrowns()
+                .get(room.getGame().getTurnOn().getY()).setIsVisible(true);
+
+        if(room.getGame().getTurnOn().getX() < 15) {
+            backgammonGameManager.updateUpperOn(room.getGame().getTurnOn());
+        }
+        else {
+            backgammonGameManager.updateBottomOn(room.getGame().getTurnOn());
+        }
+    }
+    CallBack_waitTurnProtocol callBack_waitTurnProtocol = new CallBack_waitTurnProtocol() {
+        @Override
+        public void waitTurn(UserDetails current) {
+            backgammongame_BTN_rolldice.setVisibility(View.INVISIBLE);
+            backgammongame_IMG_dice1.setVisibility(View.INVISIBLE);
+            backgammongame_IMG_dice2.setVisibility(View.INVISIBLE);
+           // MySignal.getInstance().toast("Wait for your turn");
+            gameDBManager.readUpdatedBoard(backgammonGameManager.getRoom());
+            //gameDBManager.readTurnFromDB(backgammonGameManager.getRoom(), current);
+        }
+    };
+    CallBack_playTurnProtocol callBack_playTurnProtocol= new CallBack_playTurnProtocol() {
+        @Override
+        public void playTurn(UserDetails currentUser) {
+            backgammongame_BTN_rolldice.setVisibility(View.VISIBLE);
+            backgammongame_IMG_dice1.setVisibility(View.VISIBLE);
+            backgammongame_IMG_dice2.setVisibility(View.VISIBLE);
+           // MySignal.getInstance().toast("play your turn");
+        }
+    };
     CallBack_chipProtocol callBack_chipProtocol = new CallBack_chipProtocol() {
         @Override
         public void chip(ChipRow chipRow, boolean direction) {
-
+            if(endOfGame == true) {
+                MySignal.getInstance().toast("The game is over!");
+                return;
+            }
             if(backgammonGameManager.getCurrentDice() == 0){
                 MySignal.getInstance().toast("First role dices!");
                 return;
             }
             ChipRow tempChipRow = chipRow;
             if(backgammonGameManager.checkMovement(tempChipRow, direction)) { // check if chip movement is valid
+                gameDBManager.writeBoardChangesToDB(backgammonGameManager.getRoom());
                 adapter_chip.notifyDataSetChanged();
                 roundCounter++;
                 if(roundCounter == 1){
@@ -66,6 +149,10 @@ public class BackgammonGameActivity extends AppCompatActivity {
                         backgammongame_IMG_yellowback1.setVisibility(View.INVISIBLE);
                         backgammongame_IMG_yellowback2.setVisibility(View.INVISIBLE);
                         wasRepeated = false;
+                        if(backgammonGameManager.getCurrentUser().getChipColor() == UserDetails.CHIP.BROWN)
+                            gameDBManager.updateTurn(backgammonGameManager.getRoom(), 1);
+                        else
+                            gameDBManager.updateTurn(backgammonGameManager.getRoom(), 0);
                     }
                 }
             }
@@ -108,29 +195,86 @@ public class BackgammonGameActivity extends AppCompatActivity {
     // initialize manager in onCreate function
     private BackgammonGameManager backgammonGameManager;
 
+    private CountDownTimer gameTimer;
 
+    private boolean endOfGame = false;
 
+    private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+    GameDBManager gameDBManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_backgammon_game);
-
         backgammonGameManager = new BackgammonGameManager();
+        Intent previuosIntent = getIntent();
+        Room room = (Room)previuosIntent.getExtras().getSerializable(KEY_ROOM);
+        backgammonGameManager.setRoom(room);
+        gameDBManager = new GameDBManager();
+
+        gameDBManager.setCallBack_updateChipsProtocol(callBack_updateChipsProtocol);
+        gameDBManager.setCallBack_waitTurnProtocol(callBack_waitTurnProtocol);
+        gameDBManager.setCallBack_playTurnProtocol(callBack_playTurnProtocol);
+
+        FirebaseUser current = FirebaseAuth.getInstance().getCurrentUser();
+        if(current.getUid().equals(backgammonGameManager.getRoom().getRoomId()))
+            backgammonGameManager.setCurrentUser(backgammonGameManager.getRoom().getHost());
+        else
+            backgammonGameManager.setCurrentUser(backgammonGameManager.getRoom().getPlayer2());
+        gameTimer = new CountDownTimer(180000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                // Update the UI with the remaining time
+                TextView textView = findViewById(R.id.backgammongame_LBL_timer);
+                textView.setText("Time left: " + millisUntilFinished / 1000 + " seconds");
+            }
+
+            @Override
+            public void onFinish() {
+                // Perform actions when the timer is finished
+                TextView textView = findViewById(R.id.backgammongame_LBL_timer);
+                textView.setText("Game Over");
+                endOfGame = true;
+                hasRolled = true;
+                updateUI();
+            }
+        };
 
         findViews();
 
+        backgammongame_BTN_rolldice.setVisibility(View.INVISIBLE);
+        backgammongame_IMG_dice1.setVisibility(View.INVISIBLE);
+        backgammongame_IMG_dice2.setVisibility(View.INVISIBLE);
+
+        backgammonGameManager.getRoom().getGame().setTurn(0);
+        gameDBManager.initiateTurn(backgammonGameManager.getRoom());
+        gameDBManager.readTurnFromDB(room, backgammonGameManager.getCurrentUser());
         backgammonGameManager.init();
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         backgammongame_RCV_recyclerView.setLayoutManager(layoutManager);
         adapter_chip = new Adapter_Chip(backgammonGameManager.getChipsRows());
         backgammongame_RCV_recyclerView.setAdapter(adapter_chip);
 
-        adapter_chip.setCallBack_chipProtocol(callBack_chipProtocol); // this one I added
+        if(currentUser.getUid().equals(backgammonGameManager.getRoom().getHost().getId()))
+            adapter_chip.setTheUser(backgammonGameManager.getRoom().getHost());
+        else
+            adapter_chip.setTheUser(backgammonGameManager.getRoom().getPlayer2());
+
+        adapter_chip.setCallBack_chipProtocol(callBack_chipProtocol);
 
         initButtonView();
+        gameTimer.start();
         MySignal.init(this);
     }
 
+    private void updateUI() {
+        MySignal.getInstance().toast("The game is over!");
+        if(backgammonGameManager.getEatenBrowns() > backgammonGameManager.getEatenWhites())
+            MySignal.getInstance().toast("The winner is the brown's player!");
+        else if(backgammonGameManager.getEatenBrowns() < backgammonGameManager.getEatenWhites())
+            MySignal.getInstance().toast("The winner is the white's player!");
+        else if(backgammonGameManager.getEatenBrowns() == backgammonGameManager.getEatenWhites())
+            MySignal.getInstance().toast("It's a tie!");
+    }
     private void findViews() {
         backgammongame_RCV_recyclerView = findViewById(R.id.backgammongame_RCV_recyclerView);
 
@@ -160,24 +304,6 @@ public class BackgammonGameActivity extends AppCompatActivity {
                 handler.postDelayed(myRunnable, 1000); // Delay in milliseconds
             }
         });
-//        determineStartingPlayer();
-    }
-
-    private void determineStartingPlayer() {
-        backgammongame_BTN_rolldice.setVisibility(View.VISIBLE);
-        backgammongame_IMG_dice1.setVisibility(View.VISIBLE);
-        backgammongame_IMG_dice2.setVisibility(View.VISIBLE);
-        int player1Roll = rollDice();
-        int player2Roll = rollDice();
-        if (player1Roll > player2Roll) {
-            currentPlayer = 1;
-            Log.d("current is 1", "Player 1 starts");
-        } else if (player2Roll > player1Roll) {
-            currentPlayer = 2;
-            Log.d("current is 2", "Player 2 starts");
-        } else {
-            determineStartingPlayer();
-        }
     }
 
     private int rollDice() {

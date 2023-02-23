@@ -20,6 +20,29 @@ public class BackgammonGameManager {
     private ChipRow.COLOR[] bottomChips = new ChipRow.COLOR[13]; // arrays for color of chips in each column
     private ArrayList<ChipsRow> chipsRows;
 
+    private int eatenBrowns = 15;
+    private int eatenWhites = 15;
+
+    private Room room;
+
+    private UserDetails currentUser;
+
+    public UserDetails getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(UserDetails currentUser) {
+        this.currentUser = currentUser;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
     public ArrayList<ChipsRow> getChipsRows() {
         return chipsRows;
     }
@@ -112,6 +135,16 @@ public class BackgammonGameManager {
         return false;
     }
 
+    public int getEatenBrowns() {
+        return eatenBrowns;
+    }
+
+
+    public int getEatenWhites() {
+        return eatenWhites;
+    }
+
+
     private boolean checkMoveValidationForRightAndWhiteDifferentBoardPosition(ChipRow chipRow, int tempCol) {
         if (bottomBoard[tempCol] > 1 && bottomChips[tempCol] != chipRow.getColor()) { // not valid step
             return false;
@@ -119,28 +152,31 @@ public class BackgammonGameManager {
         if (bottomBoard[tempCol] == 0) { // tempCol is empty
             bottomBoard[tempCol]++;
             bottomChips[tempCol] = chipRow.getColor();
-            updateUpper(chipRow, tempCol);
+            updateUpperOff(chipRow, tempCol);
             updateBottomAndWhite(tempCol);
             return true;
         }
         if (bottomBoard[tempCol] == 1) { // tempCol has one chip
             if (bottomChips[tempCol] != chipRow.getColor()) { // white will eat brown
+                //bottomChips[tempCol] = null;
                 bottomChips[tempCol] = chipRow.getColor();
-                updateUpper(chipRow, tempCol);
+                updateUpperOff(chipRow, tempCol);
                 updateBottomAndWhite(tempCol);
-                chipsRows.get(32).getBrowns().get(tempCol).setIsVisible(true); // update the eaten chip
+                chipsRows.get(30).getBrowns().get(tempCol).setIsVisible(false);
+                room.getGame().setEaten(new Coordinate().setX(30).setY(tempCol));
+                eatenBrowns--; // update the eaten chip
                 return true;
             }
             else { // upperChips[tempCol] = chipRow.getColor()
                 bottomBoard[tempCol]++;
-                updateUpper(chipRow, tempCol);
+                updateUpperOff(chipRow, tempCol);
                 updateBottomAndWhite(tempCol);
                 return true;
             }
         }
         if(bottomBoard[tempCol] > 1) { // it can't be with different colors (checked it already)
             bottomBoard[tempCol]++;
-            updateUpper(chipRow, tempCol);
+            updateUpperOff(chipRow, tempCol);
             updateBottomAndWhite(tempCol);
             return true;
         }
@@ -162,7 +198,9 @@ public class BackgammonGameManager {
                 upperChips[tempCol] = chipRow.getColor();
                 updateBottom(chipRow, tempCol);
                 updateUpperAndBrown(tempCol);
-                chipsRows.get(32).getWhites().get(tempCol).setIsVisible(true); // update the eaten chip
+                chipsRows.get(0).getWhites().get(tempCol).setIsVisible(false);
+                room.getGame().setEaten(new Coordinate().setX(0).setY(tempCol));
+                eatenWhites--;
                 return true;
             }
             else { // bottomChips[tempCol] = chipRow.getColor()
@@ -187,28 +225,30 @@ public class BackgammonGameManager {
         if(upperBoard[tempCol] == 0) { // tempCol is empty
             upperBoard[tempCol]++;
             upperChips[tempCol] = chipRow.getColor();
-            updateUpper(chipRow, tempCol);
+            updateUpperOff(chipRow, tempCol);
             updateUpperAndWhite(tempCol);
             return true;
         }
         if(upperBoard[tempCol] == 1) { // tempCol has one chip
             if (upperChips[tempCol] != chipRow.getColor()) { // white will eat brown
                 upperChips[tempCol] = chipRow.getColor();
-                updateUpper(chipRow, tempCol);
+                updateUpperOff(chipRow, tempCol);
                 updateUpperAndWhite(tempCol);
-                chipsRows.get(32).getBrowns().get(tempCol).setIsVisible(true); // update the eaten chip
+                chipsRows.get(0).getBrowns().get(tempCol).setIsVisible(false);
+                room.getGame().setEaten(new Coordinate().setX(0).setY(tempCol));
+                eatenBrowns--;
                 return true;
             }
             else { // upperChips[tempCol] = chipRow.getColor()
                 upperBoard[tempCol]++;
-                updateUpper(chipRow, tempCol);
+                updateUpperOff(chipRow, tempCol);
                 updateUpperAndWhite(tempCol);
                 return true;
             }
         }
         if(upperBoard[tempCol] > 1) { // it can't be with different colors (check it already)
             upperBoard[tempCol]++;
-            updateUpper(chipRow, tempCol);
+            updateUpperOff(chipRow, tempCol);
             updateUpperAndWhite(tempCol);
             return true;
         }
@@ -226,11 +266,13 @@ public class BackgammonGameManager {
             return true;
         }
         if (bottomBoard[tempCol] == 1) { // tempCol has one chip
-            if (bottomChips[tempCol] != chipRow.getColor()) { // white will eat brown
+            if (bottomChips[tempCol] != chipRow.getColor()) { // brown will eat white
                 bottomChips[tempCol] = chipRow.getColor();
                 updateBottom(chipRow, tempCol);
                 updateBottomAndBrown(tempCol);
-                chipsRows.get(32).getWhites().get(tempCol).setIsVisible(true); // update the eaten chip
+                chipsRows.get(30).getWhites().get(tempCol).setIsVisible(false);
+                room.getGame().setEaten(new Coordinate().setX(30).setY(tempCol));
+                eatenWhites--;
                 return true;
             }
             else { // bottomChips[tempCol] = chipRow.getColor()
@@ -283,7 +325,9 @@ public class BackgammonGameManager {
                 bottomChips[tempCol] = chipRow.getColor();
                 updateBottom(chipRow, tempCol);
                 updateBottomAndWhite(tempCol);
-                chipsRows.get(32).getBrowns().get(tempCol).setIsVisible(true); // update the eaten chip
+                chipsRows.get(30).getBrowns().get(tempCol).setIsVisible(false);
+                room.getGame().setEaten(new Coordinate().setX(30).setY(tempCol));
+                eatenBrowns--;
                 return true;
             } else { // bottomChips[tempCol] = chipRow.getColor()
                 bottomBoard[tempCol]++;
@@ -307,28 +351,30 @@ public class BackgammonGameManager {
         if(upperBoard[tempCol] == 0) { // tempCol is empty
             upperBoard[tempCol]++;
             upperChips[tempCol] = chipRow.getColor();
-            updateUpper(chipRow, tempCol);
+            updateUpperOff(chipRow, tempCol);
             updateUpperAndBrown(tempCol);
             return true;
         }
         if(upperBoard[tempCol] == 1) { // tempCol has one chip
-            if(upperChips[tempCol] != chipRow.getColor()) { // white will eat brown
+            if(upperChips[tempCol] != chipRow.getColor()) { // brown will eat white
                 upperChips[tempCol] = chipRow.getColor();
-                updateUpper(chipRow, tempCol);
+                updateUpperOff(chipRow, tempCol);
                 updateUpperAndBrown(tempCol);
-                chipsRows.get(32).getWhites().get(tempCol).setIsVisible(true); // update the eaten chip
+                chipsRows.get(0).getWhites().get(tempCol).setIsVisible(false);
+                room.getGame().setEaten(new Coordinate().setX(0).setY(tempCol));
+                eatenWhites--;
                 return true;
             }
             else { // upperChips[tempCol] = chipRow.getColor()
                 upperBoard[tempCol]++;
-                updateUpper(chipRow, tempCol);
+                updateUpperOff(chipRow, tempCol);
                 updateUpperAndBrown(tempCol);
                 return true;
             }
         }
         if(upperBoard[tempCol] > 1) { // it can't be with different colors (check it already)
             upperBoard[tempCol]++;
-            updateUpper(chipRow, tempCol);
+            updateUpperOff(chipRow, tempCol);
             updateUpperAndBrown(tempCol);
             return true;
         }
@@ -340,28 +386,34 @@ public class BackgammonGameManager {
         if(bottomBoard[chipRow.getY()] == 0)
             bottomChips[chipRow.getY()] = null;
         chipRow.setIsVisible(false);
+        room.getGame().setTurnOff(new Coordinate().setX(chipRow.getX()).setY(chipRow.getY()));
     }
-    private void updateUpper(ChipRow chipRow, int tempCol) {
+    private void updateUpperOff(ChipRow chipRow, int tempCol) {
         upperBoard[chipRow.getY()]--;
         if(upperBoard[chipRow.getY()] == 0)
             upperChips[chipRow.getY()] = null;
         chipRow.setIsVisible(false);
+        room.getGame().setTurnOff(new Coordinate().setX(chipRow.getX()).setY(chipRow.getY()));
     }
 
     private void updateUpperAndWhite(int tempCol) {
         chipsRows.get(upperBoard[tempCol] - 1).getWhites().get(tempCol).setIsVisible(true);
+        room.getGame().setTurnOn(new Coordinate().setX(upperBoard[tempCol] - 1).setY(tempCol));
     }
 
     private void updateBottomAndWhite(int tempCol) {
             chipsRows.get(31 - bottomBoard[tempCol]).getWhites().get(tempCol).setIsVisible(true);
+            room.getGame().setTurnOn(new Coordinate().setX(31 - bottomBoard[tempCol]).setY(tempCol));
     }
 
     private void updateUpperAndBrown(int tempCol) {
         chipsRows.get(upperBoard[tempCol] - 1).getBrowns().get(tempCol).setIsVisible(true);
+        room.getGame().setTurnOn(new Coordinate().setX(upperBoard[tempCol] - 1).setY(tempCol));
     }
 
     private void updateBottomAndBrown(int tempCol) {
         chipsRows.get(31 - bottomBoard[tempCol]).getBrowns().get(tempCol).setIsVisible(true);
+        room.getGame().setTurnOn(new Coordinate().setX(31 - bottomBoard[tempCol]).setY(tempCol));
     }
 
     public void init() {
@@ -467,6 +519,34 @@ public class BackgammonGameManager {
         return sum == 15;
     }
 
+    public void updateUpperOff(Coordinate coordinateOff) {
+        upperBoard[coordinateOff.getY()]--;
+        if(upperBoard[coordinateOff.getY()] == 0) {
+            upperChips[upperBoard[coordinateOff.getY()]] = null;
+        }
+    }
+
+    public void updateBottomOff(Coordinate coordinateOff) {
+        bottomBoard[coordinateOff.getY()]--;
+        if(bottomBoard[coordinateOff.getY()] == 0) {
+            bottomChips[bottomBoard[coordinateOff.getY()]] = null;
+        }
+    }
+
+    public void updateUpperOn(Coordinate coordinateOn) {
+        upperBoard[coordinateOn.getY()]++;
+    }
+
+    public void updateBottomOn(Coordinate coordinateOn) {
+        bottomBoard[coordinateOn.getY()]++;
+    }
+
+    public void handleEaten(Coordinate eaten, ChipRow.COLOR color) {
+        if(eaten.getX() < 15)
+            upperChips[eaten.getY()] = color;
+        else
+            bottomChips[eaten.getY()] = color;
+    }
 }
 
 

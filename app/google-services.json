@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "747161740951",
+    "firebase_url": "https://backgammongame-7a749-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "backgammongame-7a749",
+    "storage_bucket": "backgammongame-7a749.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:747161740951:android:915eebf7279c046633abd2",
+        "android_client_info": {
+          "package_name": "com.example.final_project_backgammon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "747161740951-jbfu8f7s7457jb02ba7ac3m07v95kmbc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOeUI0Rdy4VclOYjKxQhfq9ibX22irECk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "747161740951-jbfu8f7s7457jb02ba7ac3m07v95kmbc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

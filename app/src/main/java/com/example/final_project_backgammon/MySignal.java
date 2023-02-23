@@ -22,7 +22,7 @@ public class MySignal {
     }
 
     public void toast(String text) {
-        Toast.makeText(context, text, Toast.LENGTH_LONG).show();
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
     }
 
     public static void setMySignal(MySignal mySignal) {

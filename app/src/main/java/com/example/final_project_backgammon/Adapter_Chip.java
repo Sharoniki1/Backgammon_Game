@@ -20,12 +20,18 @@ public class Adapter_Chip extends RecyclerView.Adapter<Adapter_Chip.ChipViewHold
     ArrayList<ChipsRow> chipsRows;
     private CallBack_chipProtocol callBack_chipProtocol;
 
-    public void setCallBack_chipProtocol(CallBack_chipProtocol callBack_chipProtocol) {
-        this.callBack_chipProtocol = callBack_chipProtocol;
-    }
+    private UserDetails theUser;
 
     public Adapter_Chip(ArrayList<ChipsRow> chipsRows) {
         this.chipsRows = chipsRows;
+    }
+
+    public void setTheUser(UserDetails theUser) {
+        this.theUser = theUser;
+    }
+
+    public void setCallBack_chipProtocol(CallBack_chipProtocol callBack_chipProtocol) {
+        this.callBack_chipProtocol = callBack_chipProtocol;
     }
 
     @NonNull
@@ -55,20 +61,25 @@ public class Adapter_Chip extends RecyclerView.Adapter<Adapter_Chip.ChipViewHold
     private void initViews(final ChipViewHolder holder, final int position) {
         for(int i = 0; i < 13; i++) {
             int finalI = i;
-            holder.gameblock_LAY_chipContainer1.getChildAt(i).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(holder.gameblock_LAY_chipContainer1.getChildAt(finalI).getVisibility() == View.VISIBLE)
-                        clicked(chipsRows.get(position).getBrowns().get(finalI));
-                }
-            });
-            holder.gameblock_LAY_chipContainer2.getChildAt(i).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(holder.gameblock_LAY_chipContainer2.getChildAt(finalI).getVisibility() == View.VISIBLE)
-                        clicked(chipsRows.get(position).getWhites().get(finalI));
-                }
-            });
+            if(theUser.getChipColor() == UserDetails.CHIP.BROWN) {
+                holder.gameblock_LAY_chipContainer1.getChildAt(i).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(holder.gameblock_LAY_chipContainer1.getChildAt(finalI).getVisibility() == View.VISIBLE)
+                            clicked(chipsRows.get(position).getBrowns().get(finalI));
+                    }
+                });
+            }
+            else if(theUser.getChipColor() == UserDetails.CHIP.WHITE){
+                holder.gameblock_LAY_chipContainer2.getChildAt(i).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(holder.gameblock_LAY_chipContainer2.getChildAt(finalI).getVisibility() == View.VISIBLE)
+                            clicked(chipsRows.get(position).getWhites().get(finalI));
+                    }
+                });
+            }
+
         }
     }
 
